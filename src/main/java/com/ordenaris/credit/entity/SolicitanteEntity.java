@@ -15,12 +15,6 @@ import java.time.LocalDate;
 
 public class SolicitanteEntity {
 
-    private enum ProductoFinanciero {
-        LINEA_OPERATIVA,
-        CREDITO_REVOLVENTE,
-        ARRENDAMIENTO_FINANCIERO
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -32,4 +26,6 @@ public class SolicitanteEntity {
     private ProductoFinanciero productoFinanciero;
     @Column(name = "fechaSolicitud")
     private LocalDate fechaSolicitud;
+    @Column(name = "activo")
+    private boolean activo = true;
 }
