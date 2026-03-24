@@ -1,0 +1,35 @@
+package com.ordenaris.credit.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "solicitante")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class SolicitanteEntity {
+
+    private enum ProductoFinanciero {
+        LINEA_OPERATIVA,
+        CREDITO_REVOLVENTE,
+        ARRENDAMIENTO_FINANCIERO
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name = "empresaId")
+    private String empresaId;
+    @Column(name = "montoSolicitado")
+    private BigDecimal montoSolicitado;
+    @Column(name = "productoFinanciero")
+    private ProductoFinanciero productoFinanciero;
+    @Column(name = "fechaSolicitud")
+    private LocalDate fechaSolicitud;
+}

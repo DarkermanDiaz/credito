@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  credit-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: credit-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=credit
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://credit-db:5432/credit_db
+      - SPRING_DATASOURCE_USERNAME=credit_user
+      - SPRING_DATASOURCE_PASSWORD=credit_password
+      - SERVER_PORT=8080
+    networks:
+      - credit-network
+    depends_on:
+      credit-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  credit-db:
+    image: postgres:15-alpine
+    container_name: credit-db
+    environment:
+      POSTGRES_DB: credit_db
+      POSTGRES_USER: credit_user
+      POSTGRES_PASSWORD: credit_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - credit-db-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - credit-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U credit_user -d credit_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  credit-db-data:
+
+networks:
+  credit-network:
+    driver: bridge
