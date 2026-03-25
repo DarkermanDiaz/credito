@@ -1,4 +1,4 @@
-package com.ordenaris.credit.controller;
+package com.ordenaris.riskengine.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ordenaris.credit.model.SolicitanteResponse;
-import com.ordenaris.credit.service.implementacion.SolicitanteService;
+import com.ordenaris.riskengine.model.SolicitanteResponse;
+import com.ordenaris.riskengine.service.implementacion.SolicitanteService;
 
 @RestController
 @RequestMapping("/api/v1")

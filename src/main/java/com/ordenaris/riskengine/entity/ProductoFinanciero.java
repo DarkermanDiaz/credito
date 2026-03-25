@@ -1,4 +1,4 @@
-package com.ordenaris.credit.entity;
+package com.ordenaris.riskengine.entity;
 
 public enum ProductoFinanciero {
     LINEA_OPERATIVA,

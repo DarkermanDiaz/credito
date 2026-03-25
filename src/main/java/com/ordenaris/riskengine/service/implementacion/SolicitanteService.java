@@ -1,13 +1,13 @@
-package com.ordenaris.credit.service.implementacion;
+package com.ordenaris.riskengine.service.implementacion;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.ordenaris.credit.model.SolicitanteResponse;
-import com.ordenaris.credit.repository.SolicitanteRepository;
-import com.ordenaris.credit.service.ISolicitanteService;
+import com.ordenaris.riskengine.model.SolicitanteResponse;
+import com.ordenaris.riskengine.repository.SolicitanteRepository;
+import com.ordenaris.riskengine.service.ISolicitanteService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
