@@ -27,8 +27,6 @@ public class VerificacionLegalEntity{
     private SolicitanteEntity solicitante;
     @Column(name = "tieneProcesosJudiciales")
     private Boolean tieneProcesosJudiciales;
-    @Column(name = "numeroProcesos")
-    private Integer numeroProcesos;
     @Column(name = "tieneDemandas")
     private Boolean tieneDemandas;
     @Column(name = "tieneEmbargos")

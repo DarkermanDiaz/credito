@@ -38,7 +38,6 @@ public class VerificacionLegalService implements IVerificacionLegalService {
                         response.getSolicitante().getProductoFinanciero(),
                         response.getSolicitante().getFechaSolicitud()),
                     response.getTieneProcesosJudiciales(),
-                    response.getNumeroProcesos(),
                     response.getTieneDemandas(),
                     response.getTieneEmbargos(),
                     response.getDetalleProcesoLegal()
@@ -63,7 +62,6 @@ public class VerificacionLegalService implements IVerificacionLegalService {
                         response.getSolicitante().getProductoFinanciero(),
                         response.getSolicitante().getFechaSolicitud()),
                     response.getTieneProcesosJudiciales(),
-                    response.getNumeroProcesos(),
                     response.getTieneDemandas(),
                     response.getTieneEmbargos(),
                     response.getDetalleProcesoLegal()
