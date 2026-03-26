@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.ordenaris.riskengine.model.SolicitanteResponse;
-import com.ordenaris.riskengine.repository.SolicitanteRepository;
+import com.ordenaris.riskengine.repository.ISolicitanteRepository;
 import com.ordenaris.riskengine.service.ISolicitanteService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -16,9 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 
 public class SolicitanteService implements ISolicitanteService {
-    private final SolicitanteRepository solicitanteRepository;
 
-    public SolicitanteService(SolicitanteRepository solicitanteRepository) {
+    private final ISolicitanteRepository solicitanteRepository;
+
+    public SolicitanteService(ISolicitanteRepository solicitanteRepository) {
         this.solicitanteRepository = solicitanteRepository;
     }
 
@@ -28,6 +29,7 @@ public class SolicitanteService implements ISolicitanteService {
         try {
             return solicitanteRepository.findByActivoTrue().stream()
                     .map(solicitante -> new SolicitanteResponse(
+                            solicitante.getId(),
                             solicitante.getEmpresaId(),
                             solicitante.getMontoSolicitado(),
                             solicitante.getProductoFinanciero(),
@@ -40,11 +42,13 @@ public class SolicitanteService implements ISolicitanteService {
         }
     }
 
+    @Override
     public Optional<SolicitanteResponse> readById(int id) {
         log.info("Buscando Solicitante por Id");
         try {
             return solicitanteRepository.findById(id)
                     .map(solicitante -> new SolicitanteResponse(
+                            solicitante.getId(),
                             solicitante.getEmpresaId(),
                             solicitante.getMontoSolicitado(),
                             solicitante.getProductoFinanciero(),

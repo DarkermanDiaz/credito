@@ -9,6 +9,6 @@ import com.ordenaris.riskengine.entity.SolicitanteEntity;
 
 @Repository
 
-public interface SolicitanteRepository extends JpaRepository<SolicitanteEntity, Integer> {
+public interface ISolicitanteRepository extends JpaRepository<SolicitanteEntity, Integer> {
     List<SolicitanteEntity> findByActivoTrue();
 }

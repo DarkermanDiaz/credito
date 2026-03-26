@@ -23,6 +23,7 @@ public class SolicitanteEntity {
     @Column(name = "montoSolicitado")
     private BigDecimal montoSolicitado;
     @Column(name = "productoFinanciero")
+    @Enumerated(EnumType.STRING)
     private ProductoFinanciero productoFinanciero;
     @Column(name = "fechaSolicitud")
     private LocalDate fechaSolicitud;

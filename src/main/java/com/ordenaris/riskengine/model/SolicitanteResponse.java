@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SolicitanteResponse {
-
+    private int id;
     private String empresaId;
     private BigDecimal montoSolicitado;
     private ProductoFinanciero productoFinanciero;
