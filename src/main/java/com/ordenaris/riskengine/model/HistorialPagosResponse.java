@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class HistorialPagosResponse {
 
     private int id;
+    private SolicitanteResponse solicitante;
     private LocalDate fecha;
     private double monto;
     private String acreedor;

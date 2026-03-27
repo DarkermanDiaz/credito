@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class DatosContablesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToOne
-    @Column(name = "solicitante")
+    @JoinColumn(name = "solicitante", referencedColumnName = "id")
     private SolicitanteEntity solicitante;
     @Column(name = "ventas_promedio")
     private Double ventasPromedio;
@@ -31,3 +32,4 @@ public class DatosContablesEntity {
     @Column(name = "activos")
     private Double activos;
 }
+
