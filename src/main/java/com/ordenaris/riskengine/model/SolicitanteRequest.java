@@ -3,6 +3,8 @@ package com.ordenaris.riskengine.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.ordenaris.riskengine.entity.ProductoFinanciero;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,12 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class SolicitanteRequest {
-
-    private enum ProductoFinanciero {
-        LINEA_OPERATIVA,
-        CREDITO_REVOLVENTE,
-        ARRENDAMIENTO_FINANCIERO
-    }
     
     private String empresaId;
     private BigDecimal montoSolicitado;

@@ -1,10 +1,14 @@
 package com.ordenaris.riskengine.service.implementacion;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ordenaris.riskengine.entity.SolicitanteEntity;
+import com.ordenaris.riskengine.model.MensajeStrResponse;
+import com.ordenaris.riskengine.model.SolicitanteRequest;
 import com.ordenaris.riskengine.model.SolicitanteResponse;
 import com.ordenaris.riskengine.repository.ISolicitanteRepository;
 import com.ordenaris.riskengine.service.ISolicitanteService;
@@ -57,6 +61,25 @@ public class SolicitanteService implements ISolicitanteService {
         } catch (Exception e) {
             log.error("Error al buscar Solicitante por Id", e.getMessage());
             throw new EntityNotFoundException("Error al buscar Solicitante por Id"+ e.getMessage());
+        }
+    }
+
+    @Override
+    public MensajeStrResponse create(SolicitanteRequest solicitante) {
+        log.info("Creando Solicitante");
+        SolicitanteEntity request = new SolicitanteEntity();
+        request.setActivo(true);
+        request.setEmpresaId(solicitante.getEmpresaId());
+        request.setMontoSolicitado(solicitante.getMontoSolicitado());
+        request.setProductoFinanciero(solicitante.getProductoFinanciero());
+        request.setFechaSolicitud(LocalDate.now());
+
+        try {
+            solicitanteRepository.save(request);
+            return new MensajeStrResponse("Solicitante creado correctamente");
+        } catch (Exception e) {
+            log.error("Error al crear Solicitante", e.getMessage());
+            throw new EntityNotFoundException("Error al crear Solicitante"+ e.getMessage());
         }
     }
 }
