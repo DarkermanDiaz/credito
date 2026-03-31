@@ -12,4 +12,6 @@ public interface ISolicitanteService {
     List<SolicitanteResponse> readAll();
     Optional<SolicitanteResponse> readById(int id);
     MensajeStrResponse create(SolicitanteRequest solicitanteRequest);
+    MensajeStrResponse deleteById(int id);
+    MensajeStrResponse editById(int id, SolicitanteRequest solicitante);
 }

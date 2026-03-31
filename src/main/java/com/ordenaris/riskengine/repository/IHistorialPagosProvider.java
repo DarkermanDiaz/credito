@@ -12,4 +12,5 @@ import com.ordenaris.riskengine.model.HistorialPagosResponse;
 
 public interface IHistorialPagosProvider extends JpaRepository<HistorialPagosEntity, Integer>  {
     List<HistorialPagosResponse> findByAcreedor(String acreedor);
+    List<HistorialPagosResponse> findBySolicitanteId(int id);
 }

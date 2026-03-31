@@ -82,4 +82,34 @@ public class SolicitanteService implements ISolicitanteService {
             throw new EntityNotFoundException("Error al crear Solicitante"+ e.getMessage());
         }
     }
+
+    @Override
+    public MensajeStrResponse deleteById(int id) {
+        log.info("Eliminando Solicitante por Id");
+        try {
+            solicitanteRepository.deleteById(id);
+            return new MensajeStrResponse("Solicitante eliminado correctamente");
+        } catch (Exception e) {
+            log.error("Error al eliminar Solicitante por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al eliminar Solicitante por Id"+ e.getMessage());
+        }
+    }
+
+    @Override
+    public MensajeStrResponse editById(int id, SolicitanteRequest solicitante) {
+        log.info("Editando Solicitante por Id");
+        SolicitanteEntity request = new SolicitanteEntity();
+        request.setId(id);
+        request.setMontoSolicitado(solicitante.getMontoSolicitado());
+        request.setProductoFinanciero(solicitante.getProductoFinanciero());
+        request.setEmpresaId(solicitante.getEmpresaId());
+
+        try {
+            solicitanteRepository.save(request);
+            return new MensajeStrResponse("Solicitante editado correctamente");
+        } catch (Exception e) {
+            log.error("Error al editar Solicitante por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al editar Solicitante por Id"+ e.getMessage());
+        }
+    }
 }

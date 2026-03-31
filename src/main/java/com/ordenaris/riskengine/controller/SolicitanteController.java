@@ -3,7 +3,9 @@ package com.ordenaris.riskengine.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,5 +43,15 @@ public class SolicitanteController {
     @PostMapping("/solicitantes")
     public MensajeStrResponse create(@RequestBody SolicitanteRequest solicitante) {
         return solicitanteService.create(solicitante);
+    }
+
+    @DeleteMapping("/solicitantes/{id}")
+    public MensajeStrResponse deleteById(@PathVariable int id) {
+        return solicitanteService.deleteById(id);
+    }
+
+    @PatchMapping("/solicitantes/{id}")
+    public MensajeStrResponse editById(@PathVariable int id, @RequestBody SolicitanteRequest solicitante) {
+        return solicitanteService.editById(id, solicitante);
     }
 }
