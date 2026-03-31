@@ -33,4 +33,6 @@ public class VerificacionLegalEntity{
     private Boolean tieneEmbargos;
     @Column(name = "detalleProcesoLegal")
     private String detalleProcesoLegal;
+    @Column(name = "activo")
+    private boolean activo = true;
 }

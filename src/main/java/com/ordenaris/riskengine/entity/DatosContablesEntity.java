@@ -31,5 +31,7 @@ public class DatosContablesEntity {
     private Double pasivos;
     @Column(name = "activos")
     private Double activos;
+    @Column(name = "activo")
+    private boolean activo = true;
 }
 

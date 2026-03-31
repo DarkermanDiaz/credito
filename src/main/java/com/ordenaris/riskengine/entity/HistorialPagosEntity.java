@@ -31,4 +31,6 @@ public class HistorialPagosEntity {
     private Double monto;
     @Column(name = "acreedor")
     private String acreedor;
+    @Column(name = "activo")
+    private boolean activo = true;
 }
