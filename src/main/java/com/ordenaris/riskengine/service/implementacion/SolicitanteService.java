@@ -86,8 +86,11 @@ public class SolicitanteService implements ISolicitanteService {
     @Override
     public MensajeStrResponse deleteById(int id) {
         log.info("Eliminando Solicitante por Id");
+        
         try {
-            solicitanteRepository.deleteById(id);
+            SolicitanteEntity request = solicitanteRepository.findById(id).get();
+            request.setActivo(false);
+            solicitanteRepository.save(request);
             return new MensajeStrResponse("Solicitante eliminado correctamente");
         } catch (Exception e) {
             log.error("Error al eliminar Solicitante por Id", e.getMessage());
@@ -96,13 +99,17 @@ public class SolicitanteService implements ISolicitanteService {
     }
 
     @Override
-    public MensajeStrResponse editById(int id, SolicitanteRequest solicitante) {
+    public MensajeStrResponse editById(int id, Optional<SolicitanteRequest> solicitante) {
         log.info("Editando Solicitante por Id");
         SolicitanteEntity request = new SolicitanteEntity();
+        if (solicitante.isEmpty()) {
+            log.error("Solcitud de Solicitante vacia");
+            throw new IllegalArgumentException("Solcitud de Solicitante vacia");
+        }
         request.setId(id);
-        request.setMontoSolicitado(solicitante.getMontoSolicitado());
-        request.setProductoFinanciero(solicitante.getProductoFinanciero());
-        request.setEmpresaId(solicitante.getEmpresaId());
+        request.setMontoSolicitado(solicitante.get().getMontoSolicitado());
+        request.setProductoFinanciero(solicitante.get().getProductoFinanciero());
+        request.setEmpresaId(solicitante.get().getEmpresaId());
 
         try {
             solicitanteRepository.save(request);

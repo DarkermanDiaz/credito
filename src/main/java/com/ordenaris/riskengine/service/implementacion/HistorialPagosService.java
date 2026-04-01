@@ -34,7 +34,7 @@ public class HistorialPagosService implements IHistorialPagosService {
     public List<HistorialPagosResponse> readAll() {
         log.info("Buscando todos los HistorialPagos");
         try {
-            return historialPagosProvider.findAll().stream()
+            return historialPagosProvider.findByActivoTrue().stream()
                     .map(response -> new HistorialPagosResponse(
                             response.getId(),
                             new SolicitanteResponse(
@@ -153,8 +153,11 @@ public class HistorialPagosService implements IHistorialPagosService {
     @Override
     public MensajeStrResponse deleteById(int id) {
         log.info("Eliminando HistorialPagos por Id");
+        
         try {
-            historialPagosProvider.deleteById(id);
+            HistorialPagosEntity request = historialPagosProvider.findById(id).get();
+            request.setActivo(false);
+            historialPagosProvider.save(request);
             return new MensajeStrResponse("HistorialPagos eliminado correctamente");
         } catch (Exception e) {
             log.error("Error al eliminar HistorialPagos por Id", e.getMessage());
@@ -164,8 +167,13 @@ public class HistorialPagosService implements IHistorialPagosService {
 
     @Override
     public MensajeStrResponse editById(int id, Optional<HistorialPagosRequest> entrada) {
+
         log.info("Editando HistorialPagos por Id");
         HistorialPagosEntity request = new HistorialPagosEntity();
+        if (entrada.isEmpty()) {
+            log.error("Solcitud de HistorialPagos vacia");
+            throw new IllegalArgumentException("Solcitud de HistorialPagos vacia");
+        }
         request.setId(id);
         request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante().getId()).get());
         request.setFecha(entrada.get().getFecha());

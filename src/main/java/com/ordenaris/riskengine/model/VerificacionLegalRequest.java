@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class VerificacionLegalResponse {
-    private int id;
+public class VerificacionLegalRequest {
     private SolicitanteResponse solicitante;
     private ProcesosLegales tipoProceso;
     private String detalleProcesoLegal;

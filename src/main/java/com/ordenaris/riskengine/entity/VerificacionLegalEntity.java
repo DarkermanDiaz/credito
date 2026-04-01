@@ -2,6 +2,8 @@ package com.ordenaris.riskengine.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,12 +27,9 @@ public class VerificacionLegalEntity{
     @ManyToOne
     @JoinColumn(name = "solicitante")
     private SolicitanteEntity solicitante;
-    @Column(name = "tieneProcesosJudiciales")
-    private Boolean tieneProcesosJudiciales;
-    @Column(name = "tieneDemandas")
-    private Boolean tieneDemandas;
-    @Column(name = "tieneEmbargos")
-    private Boolean tieneEmbargos;
+    @Column(name = "tipoProceso")
+    @Enumerated(EnumType.STRING)
+    private ProcesosLegales tipoProceso;
     @Column(name = "detalleProcesoLegal")
     private String detalleProcesoLegal;
     @Column(name = "activo")

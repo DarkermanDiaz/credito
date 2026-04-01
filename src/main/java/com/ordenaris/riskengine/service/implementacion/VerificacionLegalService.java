@@ -5,8 +5,12 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ordenaris.riskengine.entity.VerificacionLegalEntity;
+import com.ordenaris.riskengine.model.MensajeStrResponse;
 import com.ordenaris.riskengine.model.SolicitanteResponse;
+import com.ordenaris.riskengine.model.VerificacionLegalRequest;
 import com.ordenaris.riskengine.model.VerificacionLegalResponse;
+import com.ordenaris.riskengine.repository.ISolicitanteRepository;
 import com.ordenaris.riskengine.repository.IVerificacionLegalProvider;
 import com.ordenaris.riskengine.service.IVerificacionLegalService;
 
@@ -19,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class VerificacionLegalService implements IVerificacionLegalService {
     
     private final IVerificacionLegalProvider verificacionLegalProvider;
+    private final ISolicitanteRepository solicitanteRepository;
     
-    public VerificacionLegalService(IVerificacionLegalProvider verificacionLegalProvider) {
+    public VerificacionLegalService(IVerificacionLegalProvider verificacionLegalProvider, ISolicitanteRepository solicitanteRepository) {
         this.verificacionLegalProvider = verificacionLegalProvider;
+        this.solicitanteRepository = solicitanteRepository;
     }
 
     @Override
@@ -37,9 +43,7 @@ public class VerificacionLegalService implements IVerificacionLegalService {
                         response.getSolicitante().getMontoSolicitado(),
                         response.getSolicitante().getProductoFinanciero(),
                         response.getSolicitante().getFechaSolicitud()),
-                    response.getTieneProcesosJudiciales(),
-                    response.getTieneDemandas(),
-                    response.getTieneEmbargos(),
+                    response.getTipoProceso(),
                     response.getDetalleProcesoLegal()
                 )).toList();
         }catch(Exception e){
@@ -61,9 +65,7 @@ public class VerificacionLegalService implements IVerificacionLegalService {
                         response.getSolicitante().getMontoSolicitado(),
                         response.getSolicitante().getProductoFinanciero(),
                         response.getSolicitante().getFechaSolicitud()),
-                    response.getTieneProcesosJudiciales(),
-                    response.getTieneDemandas(),
-                    response.getTieneEmbargos(),
+                    response.getTipoProceso(),
                     response.getDetalleProcesoLegal()
                 )
             );
@@ -73,4 +75,47 @@ public class VerificacionLegalService implements IVerificacionLegalService {
         }
     }
 
+    @Override
+    public MensajeStrResponse create(Optional<VerificacionLegalRequest> entrada) {
+        log.info("Guardando Verificacion Legal");
+        VerificacionLegalEntity request = new VerificacionLegalEntity();
+        if (entrada.isEmpty()) {
+            log.error("Solcitud de Verificacion Legal vacia");
+            throw new IllegalArgumentException("Solcitud de Verificacion Legal vacia");
+        } else {
+            request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante().getId()).get());
+            request.setTipoProceso(entrada.get().getTipoProceso());
+            request.setDetalleProcesoLegal(entrada.get().getDetalleProcesoLegal());
+        }
+
+        try {
+            verificacionLegalProvider.save(request);
+            return new MensajeStrResponse("Verificacion Legal guardado correctamente");
+        } catch (Exception e) {
+            log.error("Error al guardar Verificacion Legal", e.getMessage());
+            throw new EntityNotFoundException("Error al guardar Verificacion Legal"+ e.getMessage());
+        }
+    }
+
+    @Override
+    public MensajeStrResponse editById(int id, Optional<VerificacionLegalRequest> entrada) {
+        log.info("Editando Verificacion Legal por Id");
+        VerificacionLegalEntity request = new VerificacionLegalEntity();
+        if (entrada.isEmpty()) {
+            log.error("Solcitud de Verificacion Legal vacia");
+            throw new IllegalArgumentException("Solcitud de Verificacion Legal vacia");
+        }
+        request.setId(id);
+        request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante().getId()).get());
+        request.setTipoProceso(entrada.get().getTipoProceso());
+        request.setDetalleProcesoLegal(entrada.get().getDetalleProcesoLegal());
+
+        try {
+            verificacionLegalProvider.save(request);
+            return new MensajeStrResponse("Verificacion Legal editado correctamente");
+        } catch (Exception e) {
+            log.error("Error al editar Verificacion Legal por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al editar Verificacion Legal por Id"+ e.getMessage());
+        }
+    }
 }

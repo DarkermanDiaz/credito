@@ -51,7 +51,7 @@ public class SolicitanteController {
     }
 
     @PatchMapping("/solicitantes/{id}")
-    public MensajeStrResponse editById(@PathVariable int id, @RequestBody SolicitanteRequest solicitante) {
+    public MensajeStrResponse editById(@PathVariable int id, @RequestBody Optional<SolicitanteRequest> solicitante) {
         return solicitanteService.editById(id, solicitante);
     }
 }
