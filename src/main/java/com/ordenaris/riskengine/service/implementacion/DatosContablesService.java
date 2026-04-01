@@ -6,9 +6,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.ordenaris.riskengine.entity.DatosContablesEntity;
+import com.ordenaris.riskengine.model.DatosContablesRequest;
 import com.ordenaris.riskengine.model.DatosContablesResponse;
+import com.ordenaris.riskengine.model.MensajeStrResponse;
 import com.ordenaris.riskengine.model.SolicitanteResponse;
 import com.ordenaris.riskengine.repository.IDatosContablesProvider;
+import com.ordenaris.riskengine.repository.ISolicitanteRepository;
 import com.ordenaris.riskengine.service.IDatosContablesService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class DatosContablesService implements IDatosContablesService {
 
     private final IDatosContablesProvider datosContablesProvider;
-    private final SolicitanteService solicitanteService;
+    private final ISolicitanteRepository solicitanteRepository;
 
-    public DatosContablesService(IDatosContablesProvider datosContablesProvider, SolicitanteService solicitanteService) {
+    public DatosContablesService(IDatosContablesProvider datosContablesProvider, ISolicitanteRepository solicitanteRepository) {
         this.datosContablesProvider = datosContablesProvider;
-        this.solicitanteService = solicitanteService;
+        this.solicitanteRepository = solicitanteRepository;
     }
 
     @Override
@@ -94,6 +97,30 @@ public class DatosContablesService implements IDatosContablesService {
         } catch (Exception e) {
             log.error("Error al buscar Datos Contables por Solicitante", e.getMessage());
             throw new EntityNotFoundException("Error al buscar Datos Contables por Solicitante"+ e.getMessage());
+        }
+    }
+
+    public MensajeStrResponse create(Optional<DatosContablesRequest> entrada) {
+        log.info("Guardando Datos Contables");
+        DatosContablesEntity request = new DatosContablesEntity();
+
+        if (entrada.isEmpty()) {
+            log.error("Solcitud de Datos Contables vacia");
+            throw new IllegalArgumentException("Solcitud de Datos Contables vacia");
+        } else {
+            request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante().getId()).get());
+            request.setVentasPromedio(entrada.get().getVentasPromedio());
+            request.setPasivos(entrada.get().getPasivos());
+            request.setActivos(entrada.get().getActivos());
+            request.setActivo(true);
+        }
+
+        try {
+            datosContablesProvider.save(request);
+            return new MensajeStrResponse("Datos Contables guardados correctamente");
+        } catch (Exception e) {
+            log.error("Error al guardar Datos Contables", e.getMessage());
+            throw new EntityNotFoundException("Error al guardar Datos Contables"+ e.getMessage());
         }
     }
 
