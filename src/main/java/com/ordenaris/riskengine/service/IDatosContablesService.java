@@ -8,5 +8,5 @@ import com.ordenaris.riskengine.model.DatosContablesResponse;
 public interface IDatosContablesService {
     List<DatosContablesResponse> readAll();
     Optional<DatosContablesResponse> readById(int id);
-    List<DatosContablesResponse> readBySolicitante(int id);
+    Optional<DatosContablesResponse> readBySolicitante(int id);
 }

@@ -37,7 +37,7 @@ public class DatosContablesController {
     }
 
     @GetMapping("/datoscontables/solicitante/{id}")
-    public List<DatosContablesResponse> readBySolicitante(@PathVariable int id) {
+    public Optional<DatosContablesResponse> readBySolicitante(@PathVariable int id) {
         return datosContablesService.readBySolicitante(id);
     }
 
@@ -46,5 +46,5 @@ public class DatosContablesController {
         return datosContablesService.create(datosContables);
     }
 
-    
+
 }

@@ -1,14 +1,14 @@
 package com.ordenaris.riskengine.motor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import com.ordenaris.riskengine.entity.DatosContablesEntity;
-import com.ordenaris.riskengine.entity.SolicitanteEntity;
-import com.ordenaris.riskengine.entity.VerificacionLegalEntity;
-import com.ordenaris.riskengine.entity.HistorialPagosEntity;
 import com.ordenaris.riskengine.model.DatosContablesResponse;
 import com.ordenaris.riskengine.model.HistorialPagosResponse;
 import com.ordenaris.riskengine.model.RiskResults;
+import com.ordenaris.riskengine.model.RiskResults.Risk;
 import com.ordenaris.riskengine.model.SolicitanteResponse;
 import com.ordenaris.riskengine.model.VerificacionLegalResponse;
 import com.ordenaris.riskengine.service.implementacion.DatosContablesService;
@@ -18,10 +18,10 @@ import com.ordenaris.riskengine.service.implementacion.VerificacionLegalService;
 
 public class RiskEngine {
 
-    final private SolicitanteService solicitanteService;
-    final private VerificacionLegalService verificacionLegalService;
-    final private HistorialPagosService historialPagosService;
-    final private DatosContablesService datosContablesService;
+    private final SolicitanteService solicitanteService;
+    private final VerificacionLegalService verificacionLegalService;
+    private final HistorialPagosService historialPagosService;
+    private final DatosContablesService datosContablesService;
 
     public RiskEngine(SolicitanteService solicitanteService, VerificacionLegalService verificacionLegalService, HistorialPagosService historialPagosService, DatosContablesService datosContablesService) {
         this.solicitanteService = solicitanteService;
@@ -31,11 +31,40 @@ public class RiskEngine {
     }
 
     public RiskResults calculateRisk(int id) {
-        SolicitanteResponse solicitante = solicitanteService.readById(id).get();
-        List<DatosContablesResponse> datosContables = datosContablesService.readBySolicitante(id);
+        SolicitanteResponse solicitante = solicitanteService.readById(id).orElseThrow();
+        DatosContablesResponse datosContables = datosContablesService.readBySolicitante(id).orElseThrow();
         List<HistorialPagosResponse> historialPagos = historialPagosService.readBySolicitante(id);
+        List<HistorialPagosResponse> historialPagoLast = historialPagosService.readLastBySolicitanteId(id);
         List<VerificacionLegalResponse> verificacionLegal = verificacionLegalService.readAll();
-        return new RiskResults();
+
+        RiskResults results = new RiskResults();
+        AtomicInteger tempRisk = new AtomicInteger(0);
+
+        historialPagos.stream().forEach(
+            p -> {
+                if (p.getFecha().isBefore(LocalDate.now().minusDays(90)) && p.isActivo()) { 
+                    tempRisk.set(0);
+                }
+            }
+        );
+
+        historialPagoLast.stream().forEach(
+            p -> {
+                if (!p.isActivo()) { 
+                    tempRisk.incrementAndGet();
+                }
+            }
+        );
+
+        if (solicitante.getMontoSolicitado().compareTo(BigDecimal.valueOf(datosContables.getVentasPromedio() * 8)) > 0) {
+            results.setRisk(Risk.ALTO);
+        } else if (tempRisk.get() > 0) {
+            results.setRisk(Risk.MEDIO);
+        } else {
+            results.setRisk(Risk.BAJO);
+        }
+        
+        return results;
     }
 
 }

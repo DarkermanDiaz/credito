@@ -3,6 +3,8 @@ package com.ordenaris.riskengine.service.implementacion;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.ordenaris.riskengine.entity.HistorialPagosEntity;
@@ -46,8 +48,8 @@ public class HistorialPagosService implements IHistorialPagosService {
                             ),
                             response.getFecha(),
                             response.getMonto(),
-                            response.getAcreedor()
-                            
+                            response.getAcreedor(),
+                            response.isActivo()
             )).toList(); 
         } catch (Exception e) {
             log.error("Error al buscar HistorialPagos", e.getMessage());
@@ -71,7 +73,8 @@ public class HistorialPagosService implements IHistorialPagosService {
                             ),
                             response.getFecha(),
                             response.getMonto(),
-                            response.getAcreedor()
+                            response.getAcreedor(),
+                            response.isActivo()
                     ));
         } catch (Exception e) {
             log.error("Error al buscar HistorialPagos por Id", e.getMessage());
@@ -95,7 +98,8 @@ public class HistorialPagosService implements IHistorialPagosService {
                             ),
                             response.getFecha(),
                             response.getMonto(),
-                            response.getAcreedor()
+                            response.getAcreedor(),
+                            response.isActivo()
                     )).toList();
         } catch (Exception e) {
             log.error("Error al buscar HistorialPagos por acreedor", e.getMessage());
@@ -119,7 +123,8 @@ public class HistorialPagosService implements IHistorialPagosService {
                             ),
                             response.getFecha(),
                             response.getMonto(),
-                            response.getAcreedor()
+                            response.getAcreedor(),
+                            response.isActivo()
                     )).toList();
         } catch (Exception e) {
             log.error("Error al buscar HistorialPagos por Solicitante", e.getMessage());
@@ -140,6 +145,7 @@ public class HistorialPagosService implements IHistorialPagosService {
             request.setFecha(entrada.get().getFecha());
             request.setMonto(entrada.get().getMonto());
             request.setAcreedor(entrada.get().getAcreedor());
+            request.setActivo(entrada.get().isActivo());
         }
 
         try {
@@ -179,6 +185,7 @@ public class HistorialPagosService implements IHistorialPagosService {
         request.setFecha(entrada.get().getFecha());
         request.setMonto(entrada.get().getMonto());
         request.setAcreedor(entrada.get().getAcreedor());
+        request.setActivo(entrada.get().isActivo());
 
         try {
             historialPagosProvider.save(request);
@@ -186,6 +193,31 @@ public class HistorialPagosService implements IHistorialPagosService {
         } catch (Exception e) {
             log.error("Error al editar HistorialPagos por Id", e.getMessage());
             throw new EntityNotFoundException("Error al editar HistorialPagos por Id"+ e.getMessage());
+        }
+    }
+
+    public List<HistorialPagosResponse> readLastBySolicitanteId(int id) {
+        Pageable pageable =  PageRequest.of(0, 12);
+        log.info("Solicitando los ultimos pagos");
+        try {
+            return historialPagosProvider.readLastBySolicitanteId(id, pageable).stream()
+                    .map(response -> new HistorialPagosResponse(
+                            response.getId(),
+                            new SolicitanteResponse(
+                                    response.getSolicitante().getId(),
+                                    response.getSolicitante().getEmpresaId(),
+                                    response.getSolicitante().getMontoSolicitado(),
+                                    response.getSolicitante().getProductoFinanciero(),
+                                    response.getSolicitante().getFechaSolicitud()
+                            ),
+                            response.getFecha(),
+                            response.getMonto(),
+                            response.getAcreedor(),
+                            response.isActivo()
+                    )).toList();
+        } catch (Exception e) {
+            log.error("Error al buscar HistorialPagos por Solicitante", e.getMessage());
+            throw new EntityNotFoundException("Error al buscar HistorialPagos por Solicitante"+ e.getMessage());
         }
     }
 }

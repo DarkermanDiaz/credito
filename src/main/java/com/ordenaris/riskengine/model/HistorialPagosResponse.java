@@ -17,4 +17,5 @@ public class HistorialPagosResponse {
     private LocalDate fecha;
     private double monto;
     private String acreedor;
+    private boolean activo;
 }

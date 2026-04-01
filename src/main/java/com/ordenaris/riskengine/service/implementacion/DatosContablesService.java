@@ -78,9 +78,9 @@ public class DatosContablesService implements IDatosContablesService {
     }
 
     @Override
-    public List<DatosContablesResponse> readBySolicitante(int id) {
+    public Optional<DatosContablesResponse> readBySolicitante(int id) {
         try {
-            return datosContablesProvider.findBySolicitanteId(id).stream()
+            return datosContablesProvider.findBySolicitanteId(id)
                 .map(response -> new DatosContablesResponse(
                     response.getId(), 
                     new SolicitanteResponse(
@@ -93,7 +93,7 @@ public class DatosContablesService implements IDatosContablesService {
                     response.getVentasPromedio(),
                     response.getPasivos(),
                     response.getActivos()
-            )).toList();
+            ));
         } catch (Exception e) {
             log.error("Error al buscar Datos Contables por Solicitante", e.getMessage());
             throw new EntityNotFoundException("Error al buscar Datos Contables por Solicitante"+ e.getMessage());
