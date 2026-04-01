@@ -118,4 +118,26 @@ public class VerificacionLegalService implements IVerificacionLegalService {
             throw new EntityNotFoundException("Error al editar Verificacion Legal por Id"+ e.getMessage());
         }
     }
+
+    @Override
+    public List<VerificacionLegalResponse> readBySolicitanteId(int id) {
+        log.info("Buscando Verificaciones Legales por Solicitante Id");
+        try{
+            return verificacionLegalProvider.findBySolicitanteId(id).stream()
+                .map(response -> new VerificacionLegalResponse(
+                    response.getId(),
+                    new SolicitanteResponse(
+                        response.getSolicitante().getId(),
+                        response.getSolicitante().getEmpresaId(),
+                        response.getSolicitante().getMontoSolicitado(),
+                        response.getSolicitante().getProductoFinanciero(),
+                        response.getSolicitante().getFechaSolicitud()),
+                    response.getTipoProceso(),
+                    response.getDetalleProcesoLegal()
+                )).toList();
+        }catch(Exception e){
+            log.error("Error al buscar Verificaciones Legales por Solicitante Id", e.getMessage());
+            throw new EntityNotFoundException("Error al buscar Verificaciones Legales por Solicitante Id"+ e.getMessage());
+        }
+    }
 }
