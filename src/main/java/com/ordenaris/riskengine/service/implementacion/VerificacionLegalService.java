@@ -140,4 +140,21 @@ public class VerificacionLegalService implements IVerificacionLegalService {
             throw new EntityNotFoundException("Error al buscar Verificaciones Legales por Solicitante Id"+ e.getMessage());
         }
     }
+
+    @Override
+    public MensajeStrResponse deleteById(int id) {
+        log.info("Eliminando Verificacion Legal por Id");
+        try {
+            verificacionLegalProvider.findById(id).ifPresent(
+                response -> {
+                    response.setActivo(false);
+                    verificacionLegalProvider.save(response);
+                }
+            );
+            return new MensajeStrResponse("Verificacion Legal eliminado correctamente");
+        } catch (Exception e) {
+            log.error("Error al eliminar Verificacion Legal por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al eliminar Verificacion Legal por Id"+ e.getMessage());
+        }
+    }
 }

@@ -108,7 +108,12 @@ public class DatosContablesService implements IDatosContablesService {
             log.error("Solcitud de Datos Contables vacia");
             throw new IllegalArgumentException("Solcitud de Datos Contables vacia");
         } else {
-            request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante().getId()).get());
+            try {
+                request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante()).get());
+            } catch (Exception e) {
+                log.error("Error al buscar Solicitante", e.getMessage());
+                throw new EntityNotFoundException("Error al buscar Solicitante "+ e.getMessage());
+            }
             request.setVentasPromedio(entrada.get().getVentasPromedio());
             request.setPasivos(entrada.get().getPasivos());
             request.setActivos(entrada.get().getActivos());
@@ -124,4 +129,42 @@ public class DatosContablesService implements IDatosContablesService {
         }
     }
 
+    @Override
+    public MensajeStrResponse updateById(Optional<DatosContablesRequest> entrada, int id) {
+        log.info("Editando Datos Contables por Id");
+        DatosContablesEntity request = new DatosContablesEntity();
+        if (entrada.isEmpty()) {
+            log.error("Solcitud de Datos Contables vacia");
+            throw new IllegalArgumentException("Solcitud de Datos Contables vacia");
+        }
+        request.setId(id);
+        request.setSolicitante(solicitanteRepository.findById(entrada.get().getSolicitante()).get());
+        request.setVentasPromedio(entrada.get().getVentasPromedio());
+        request.setPasivos(entrada.get().getPasivos());
+        request.setActivos(entrada.get().getActivos());
+        request.setActivo(true);
+
+        try {
+            datosContablesProvider.save(request);
+            return new MensajeStrResponse("Datos Contables editados correctamente");
+        } catch (Exception e) {
+            log.error("Error al editar Datos Contables por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al editar Datos Contables por Id"+ e.getMessage());
+        }
+    }
+
+    public MensajeStrResponse deleteById(int id) {
+        log.info("Eliminando Datos Contables por Id");
+        try {
+            datosContablesProvider.findById(id).ifPresent(
+                response -> {
+                    response.setActivo(false);
+                datosContablesProvider.save(response);}
+            );
+            return new MensajeStrResponse("Datos Contables eliminados correctamente");
+        } catch (Exception e) {
+            log.error("Error al eliminar Datos Contables por Id", e.getMessage());
+            throw new EntityNotFoundException("Error al eliminar Datos Contables por Id"+ e.getMessage());
+        }
+    }
 }

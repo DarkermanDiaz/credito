@@ -3,9 +3,11 @@ package com.ordenaris.riskengine.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +48,13 @@ public class DatosContablesController {
         return datosContablesService.create(datosContables);
     }
 
+    @PutMapping("/datoscontables/{id}")
+    public MensajeStrResponse editById(@RequestBody Optional<DatosContablesRequest> datosContables, @PathVariable int id) {
+        return datosContablesService.updateById(datosContables, id);
+    }
 
+    @DeleteMapping("/datoscontables/{id}")
+    public MensajeStrResponse deleteById(@PathVariable int id) {
+        return datosContablesService.deleteById(id);
+    }
 }

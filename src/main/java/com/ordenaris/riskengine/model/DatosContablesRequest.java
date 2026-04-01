@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class DatosContablesRequest {
-    private SolicitanteResponse solicitante;
+    private int solicitante;
     private Double ventasPromedio;
     private Double pasivos;
     private Double activos;

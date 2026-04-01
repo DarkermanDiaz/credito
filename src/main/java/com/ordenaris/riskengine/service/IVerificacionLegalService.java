@@ -13,4 +13,5 @@ public interface IVerificacionLegalService {
     MensajeStrResponse create(Optional<VerificacionLegalRequest> entrada);
     MensajeStrResponse editById(int id, Optional<VerificacionLegalRequest> entrada);
     List<VerificacionLegalResponse> readBySolicitanteId(int id);
+    MensajeStrResponse deleteById(int id);
 }

@@ -15,7 +15,15 @@ import com.ordenaris.riskengine.service.implementacion.DatosContablesService;
 import com.ordenaris.riskengine.service.implementacion.HistorialPagosService;
 import com.ordenaris.riskengine.service.implementacion.SolicitanteService;
 import com.ordenaris.riskengine.service.implementacion.VerificacionLegalService;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+
 import com.ordenaris.riskengine.entity.ProcesosLegales;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
 
 public class RiskEngine {
 
@@ -32,8 +40,10 @@ public class RiskEngine {
     }
 
     public RiskResults calculateRisk(int id) {
-        SolicitanteResponse solicitante = solicitanteService.readById(id).orElseThrow();
-        DatosContablesResponse datosContables = datosContablesService.readBySolicitante(id).orElseThrow();
+        log.info("Calculando riesgo para el solicitante con id: {}", id);
+        SolicitanteResponse solicitante = solicitanteService.readById(id).orElseThrow(EntityNotFoundException::new);
+        log.info("Solicitando Datos Contables para el solicitante con id: {}", id);
+        DatosContablesResponse datosContables = datosContablesService.readBySolicitante(id).orElseThrow(EntityNotFoundException::new);
         List<HistorialPagosResponse> historialPagos = historialPagosService.readBySolicitante(id);
         List<HistorialPagosResponse> historialPagoLast = historialPagosService.readLastBySolicitanteId(id);
         List<VerificacionLegalResponse> verificacionLegal = verificacionLegalService.readBySolicitanteId(id);
@@ -42,9 +52,12 @@ public class RiskEngine {
         Risk riskLevel = Risk.BAJO;
         StringBuilder messages = new StringBuilder();
 
+        if (historialPagos.isEmpty()) messages.append("No posee historial de pagos. \n");
+
         // Regla 1: Deuda Activa - Si existe deuda vencida > 90 días → RECHAZADO
         boolean deudaActiva = historialPagos.stream()
             .anyMatch(p -> p.getFecha().isBefore(LocalDate.now().minusDays(90)) && p.isActivo());
+        
         
         if (deudaActiva) {
             results.setRisk(Risk.RECHAZADO);
@@ -56,7 +69,7 @@ public class RiskEngine {
         if (solicitante.getMontoSolicitado()
             .compareTo(BigDecimal.valueOf(datosContables.getVentasPromedio() * 8)) > 0) {
             riskLevel = Risk.ALTO;
-            messages.append("Monto solicitado excede 8 veces el promedio de ventas. ");
+            messages.append("Monto solicitado excede 8 veces el promedio de ventas. \n");
         }
 
         // Regla 3: Empresa Nueva - Si tiene < 18 meses de existencia → mínimo MEDIO
@@ -65,7 +78,7 @@ public class RiskEngine {
             if (riskLevel == Risk.BAJO) {
                 riskLevel = Risk.MEDIO;
             }
-            messages.append("Empresa nueva (< 18 meses). ");
+            messages.append("Empresa nueva (< 18 meses). \n");
         }
 
         // Regla 4: Demanda Legal Abierta - Si existe juicio en curso → ALTO
@@ -74,19 +87,19 @@ public class RiskEngine {
         
         if (demandaAbierta) {
             riskLevel = Risk.ALTO;
-            messages.append("Existe demanda legal abierta. ");
+            messages.append("Existe demanda legal abierta. \n");
         }
 
         // Regla 5: Historial Excelente - Si últimos 12 pagos fueron en tiempo sin refinanciamiento → bajar un nivel
         if (isHistorialExcelente(historialPagoLast)) {
             riskLevel = downgradeRisk(riskLevel);
-            messages.append("Historial excelente de pagos (últimos 12 pagos en tiempo). ");
+            messages.append("Historial excelente de pagos (últimos 12 pagos en tiempo). \n");
         }
 
         // Regla 6: Producto Estricto - Si es ARRENDAMIENTO_FINANCIERO → +1 punto
         if (solicitante.getProductoFinanciero() == ProductoFinanciero.ARRENDAMIENTO_FINANCIERO) {
             riskLevel = upgradeRisk(riskLevel);
-            messages.append("Producto ARRENDAMIENTO_FINANCIERO aumenta riesgo. ");
+            messages.append("Producto ARRENDAMIENTO_FINANCIERO aumenta riesgo. \n");
         }
 
         results.setRisk(riskLevel);
