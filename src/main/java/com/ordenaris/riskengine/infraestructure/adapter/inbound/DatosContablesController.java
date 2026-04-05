@@ -1,0 +1,60 @@
+package com.ordenaris.riskengine.infraestructure.adapter.inbound;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ordenaris.riskengine.application.service.DatosContablesService;
+import com.ordenaris.riskengine.domain.model.DatosContablesRequest;
+import com.ordenaris.riskengine.domain.model.DatosContablesResponse;
+import com.ordenaris.riskengine.domain.model.MensajeStrResponse;
+
+@RestController
+@RequestMapping("/api/v1")
+
+public class DatosContablesController {
+
+    private final DatosContablesService datosContablesService;
+
+    public DatosContablesController(DatosContablesService datosContablesService) {
+        this.datosContablesService = datosContablesService;
+    }
+
+    @GetMapping("/datoscontables")
+    public List<DatosContablesResponse> readAll() {
+        return datosContablesService.readAll();
+    }
+
+    @GetMapping("/datoscontables/{id}")
+    public Optional<DatosContablesResponse> readById(@PathVariable int id) {
+        return datosContablesService.readById(id);
+    }
+
+    @GetMapping("/datoscontables/solicitante/{id}")
+    public Optional<DatosContablesResponse> readBySolicitante(@PathVariable int id) {
+        return datosContablesService.readBySolicitante(id);
+    }
+
+    @PostMapping("/datoscontables")
+    public MensajeStrResponse create(@RequestBody Optional<DatosContablesRequest> datosContables) {
+        return datosContablesService.create(datosContables);
+    }
+
+    @PutMapping("/datoscontables/{id}")
+    public MensajeStrResponse editById(@RequestBody Optional<DatosContablesRequest> datosContables, @PathVariable int id) {
+        return datosContablesService.updateById(datosContables, id);
+    }
+
+    @DeleteMapping("/datoscontables/{id}")
+    public MensajeStrResponse deleteById(@PathVariable int id) {
+        return datosContablesService.deleteById(id);
+    }
+}
