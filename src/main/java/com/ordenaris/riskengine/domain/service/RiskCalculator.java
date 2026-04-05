@@ -25,7 +25,7 @@ public class RiskCalculator {
         Risk riskLevel = Risk.BAJO;
         StringBuilder messages = new StringBuilder();
 
-        if (historialPagos.isEmpty()) messages.append("No posee historial de pagos. \n");
+        if (historialPagos.isEmpty()) messages.append("No posee historial de pagos. ");
 
         // Regla 1: Deuda Activa - Si existe deuda vencida > 90 días → RECHAZADO
         boolean deudaActiva = historialPagos.stream()
@@ -41,7 +41,7 @@ public class RiskCalculator {
         if (solicitante.getMontoSolicitado()
             .compareTo(BigDecimal.valueOf(datosContables.getVentasPromedio() * 8)) > 0) {
             riskLevel = Risk.ALTO;
-            messages.append("Monto solicitado excede 8 veces el promedio de ventas. \n");
+            messages.append("Monto solicitado excede 8 veces el promedio de ventas. ");
         }
 
         // Regla 3: Empresa Nueva - Si tiene < 18 meses de existencia → mínimo MEDIO
@@ -49,7 +49,7 @@ public class RiskCalculator {
             if (riskLevel == Risk.BAJO) {
                 riskLevel = Risk.MEDIO;
             }
-            messages.append("Empresa nueva (< 18 meses). \n");
+            messages.append("Empresa nueva (< 18 meses). ");
         }
 
         // Regla 4: Demanda Legal Abierta - Si existe juicio en curso → ALTO
@@ -58,19 +58,19 @@ public class RiskCalculator {
 
         if (demandaAbierta) {
             riskLevel = Risk.ALTO;
-            messages.append("Existe demanda legal abierta. \n");
+            messages.append("Existe demanda legal abierta. ");
         }
 
         // Regla 5: Historial Excelente - Si últimos 12 pagos fueron en tiempo sin refinanciamiento → bajar un nivel
         if (isHistorialExcelente(historialPagoLast)) {
             riskLevel = downgradeRisk(riskLevel);
-            messages.append("Historial excelente de pagos (últimos 12 pagos en tiempo). \n");
+            messages.append("Historial excelente de pagos (últimos 12 pagos en tiempo). ");
         }
 
         // Regla 6: Producto Estricto - Si es ARRENDAMIENTO_FINANCIERO → +1 punto
         if (solicitante.getProductoFinanciero() == ProductoFinanciero.ARRENDAMIENTO_FINANCIERO) {
             riskLevel = upgradeRisk(riskLevel);
-            messages.append("Producto ARRENDAMIENTO_FINANCIERO aumenta riesgo. \n");
+            messages.append("Producto ARRENDAMIENTO_FINANCIERO aumenta riesgo. ");
         }
 
         results.setRisk(riskLevel);

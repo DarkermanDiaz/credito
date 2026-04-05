@@ -17,8 +17,9 @@ import com.ordenaris.riskengine.domain.port.outbound.HistorialPagosRepositoryPor
 import com.ordenaris.riskengine.domain.port.outbound.SolicitanteRepositoryPort;
 import com.ordenaris.riskengine.domain.port.outbound.VerificacionLegalRepositoryPort;
 import com.ordenaris.riskengine.domain.service.RiskCalculator;
+import com.ordenaris.riskengine.infraestructure.exception.DatosContablesNotFound;
+import com.ordenaris.riskengine.infraestructure.exception.SolicitanteNotFound;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -54,7 +55,7 @@ public class CalculateRiskUseCase implements CalculateRiskUseCasePort {
                 entity.getProductoFinanciero(),
                 entity.getFechaSolicitud()
             ))
-            .orElseThrow(EntityNotFoundException::new);
+            .orElseThrow(() -> new SolicitanteNotFound("Solicitante no encontrado con id: " + id));
 
         log.info("Solicitando Datos Contables para el solicitante con id: {}", id);
         DatosContablesResponse datosContables = datosContablesRepository.findBySolicitanteId(id)
@@ -71,7 +72,7 @@ public class CalculateRiskUseCase implements CalculateRiskUseCasePort {
                 entity.getPasivos(),
                 entity.getActivos()
             ))
-            .orElseThrow(EntityNotFoundException::new);
+            .orElseThrow(() -> new DatosContablesNotFound("Datos Contables no encontrados para el solicitante con id: " + id + ". Si no se han cargado, favor de cargarlos."));
 
         List<HistorialPagosResponse> historialPagos = historialPagosRepository.findBySolicitanteId(id)
             .stream()
